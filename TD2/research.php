@@ -6,7 +6,6 @@ function searchMovies($query, $movies) {
     $query_date = new DateTime($query["date"]);
   }
   
-  var_dump($query);
   $found = array();
   /* For each movie we check all the parameters of the query, and if atleast one is invalid, we don't send the movie. */
   foreach($movies as $movie){
