@@ -47,7 +47,7 @@ $movies = array(
 	array("id"=>32, "title"=>"Goodfellas", "genre"=>"Drama", "releaseDate"=>"1990-09-12", "director"=>"Martin Scorsese"),
 	array("id"=>33, "title"=>"The Shawshank Redemption", "genre"=>"Drama", "releaseDate"=>"1994-09-10", "director"=>"Frank Darabont"),
 	array("id"=>34, "title"=>"Django Unchained", "genre"=>"Western", "releaseDate"=>"2012-12-25", "director"=>"Quentin Tarantino"),
-	array("id"=>35, "title"=>"C'era una volta il West", "genre"=>"Western", "releaseDate"=>"1968-25-21", "director"=>"Sergio Leone"),
+	array("id"=>35, "title"=>"C'era una volta il West", "genre"=>"Western", "releaseDate"=>"1968-05-21", "director"=>"Sergio Leone"),
 	array("id"=>36, "title"=>"American Beauty", "genre"=>"Drama", "releaseDate"=>"1999-09-15", "director"=>"Sam Mendes"),
 	array("id"=>37, "title"=>"Alien", "genre"=>"Science Fiction", "releaseDate"=>"1979-05-25", "director"=>"Ridley Scott"),
 	array("id"=>38, "title"=>"The Green Mile", "genre"=>"Drama", "releaseDate"=>"1999-12-10", "director"=>"Frank Darabont"),

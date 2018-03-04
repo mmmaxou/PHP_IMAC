@@ -1,3 +1,8 @@
+<?php 
+require_once("./data.movies.php");
+?>
+
+
 <!DOCTYPE HTML>
 <hmtl lang="fr">
 
@@ -14,19 +19,25 @@
       <form action="./movies.php" method="get">
         <div>
           <label for="title">Titre</label>
-          <input type="text" name="title" value="Fight Club" />
+          <input type="text" name="title" />
         </div>
         <div>
           <label for="date">Date</label>
           <input type="date" name="date" />
         </div>
+        <ul>
+          <?php foreach ($genres as $genre) {
+            echo <<<HTML
+<li>
+  <label for="genre_$genre">$genre</label>
+  <input type="checkbox" name="genre[]" value="$genre"" />
+</li>
+HTML;
+          } ?>
+        </ul>
         <div>
-          <label for="genre">Genre</label>
-          <input type="text" name="genre" />
-        </div>
-        <div>
-          <label for="person">Personne du cast</label>
-          <input type="text" name="person" />
+          <label for="director">Directeur</label>
+          <input type="text" name="director" />
         </div>
         <br>
         <button type="submit">Send</button>
