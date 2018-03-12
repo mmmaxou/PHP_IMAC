@@ -3,7 +3,6 @@
 require_once("./data.movies.php");
 
 function searchMovies($movies, $query) {
-  echo "CHAT";
   var_dump($movies);
   
   $found = array();
