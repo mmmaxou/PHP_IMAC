@@ -119,7 +119,21 @@ class Cast {
 	 * @return array<Cast> liste des instances de Cast
 	 */
 	public static function getDirectorsFromMovieId($idMovie) {
-		// TO DO next : #04 Jointure Cast - Movie
+		$query = "SELECT Cast.id, firstname, lastname
+              FROM Cast
+              INNER JOIN Director ON Cast.id = Director.idDirector
+              INNER JOIN Movie ON Movie.id = Director.idMovie
+              WHERE Movie.id = :id
+              ORDER BY lastname, firstname";
+    $stmt = MyPDO::getInstance()->prepare($query);
+    $stmt->bindValue(":id", $idMovie);
+    $stmt->execute();
+    $stmt->setFetchMode(PDO::FETCH_CLASS, "Cast");
+    if (($object = $stmt->fetchAll()) !== false) {
+      return $object;
+    } else {
+      throw new Exception("Erreur creation d'instance");
+    }
 	}
 
 	/**
@@ -129,7 +143,21 @@ class Cast {
 	 * @return array<Cast> liste d'instances de Cast
 	 */
 	public static function getActorsFromMovieId($idMovie) {
-		// TO DO next : #04 Jointure Cast - Movie
+		$query = "SELECT Cast.id, firstname, lastname
+              FROM Cast
+              INNER JOIN Actor ON Cast.id = Actor.idActor
+              INNER JOIN Movie ON Movie.id = Actor.idMovie
+              WHERE Movie.id = :id
+              ORDER BY lastname, firstname";
+    $stmt = MyPDO::getInstance()->prepare($query);
+    $stmt->bindValue(":id", $idMovie);
+    $stmt->execute();
+    $stmt->setFetchMode(PDO::FETCH_CLASS, "Cast");
+    if (($object = $stmt->fetchAll()) !== false) {
+      return $object;
+    } else {
+      throw new Exception("Erreur creation d'instance");
+    }
 	}
 
 }
