@@ -1,5 +1,5 @@
 <?php
-require_once 'MyPDO.my_db.include.php'; //TO DO : à modifier
+require_once 'MyPDO.mpluchar_db.include.php'; 
 
 /**
  * Classe Movie
@@ -29,7 +29,16 @@ class Movie {
 	 * @throws Exception s'il n'existe pas cet $id dans a bdd
 	 */
 	public static function createFromId($id){
-		// TO DO
+    $query = "SELECT * FROM Movie WHERE id=:id";
+    $stmt = MyPDO::getInstance()->prepare($query);
+    $stmt->bindValue(":id", $id);
+    $stmt->execute();
+    $stmt->setFetchMode(PDO::FETCH_CLASS, "Movie");
+    if (($object = $stmt->fetch()) !== false) {
+      return $object;
+    } else {
+      throw new Exception("Erreur creation d'instance");
+    }
 	}
 
 	/********************GETTERS SIMPLES********************/
@@ -39,7 +48,7 @@ class Movie {
 	 * @return int $id
 	 */
 	public function getId() {
-		// TO DO
+		return $this->id;
 	}
 
 	/**
@@ -47,7 +56,7 @@ class Movie {
 	 * @return string $title
 	 */
 	public function getTitle() {
-		// TO DO
+		return $this->title;
 	}
 
 	/**
@@ -55,7 +64,7 @@ class Movie {
 	 * @return string $releaseDate
 	 */
 	public function getReleaseDate() {
-		// TO DO
+		return $this->releaseDate;
 	}
 
 	/**
@@ -63,7 +72,7 @@ class Movie {
 	 * @return string $idCountry
 	 */
 	public function getIdCountry() {
-		// TO DO
+		return $this->idCountry;
 	}
 
 	/*******************GETTERS COMPLEXES*******************/
@@ -75,7 +84,15 @@ class Movie {
 	 * @return array<Movie> liste d'instances de Movie
 	 */
 	public static function getAll() {
-		// TO DO
+    $query = "SELECT * FROM Movie ORDER BY releaseDate DESC, title ASC";
+    $stmt = MyPDO::getInstance()->prepare($query);
+    $stmt->execute();
+    $stmt->setFetchMode(PDO::FETCH_CLASS, "Movie");
+    if (($object = $stmt->fetchAll()) !== false) {
+      return $object;
+    } else {
+      throw new Exception("Erreur creation d'instance");
+    }
 	}
 
 	/**

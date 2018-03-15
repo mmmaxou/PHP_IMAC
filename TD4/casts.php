@@ -7,12 +7,7 @@ ini_set("display_errors", 1);
 require_once 'Classes/Cast.class.php';
 require_once 'src/Style.php';
 
-$fincher = Cast::createFromId(1);
-//var_dump($fincher);
-
-$cast = array();
-$id = 1;
-$cast = Cast::getAll();
+$casts = Cast::getAll();
 ?>
 
 <h1>Movies</h1>
@@ -20,9 +15,9 @@ $cast = Cast::getAll();
 
 <?php
 echo "<ul>";
-foreach( $cast as $c ) {
+foreach( $casts as $c ) {
   echo "<li>";
-  echo "<a href='cast.php?id=".$c->getId()."'>".$c->getFirstname()." ".$c->getLastname()."</a>";
+  echo "<p><a href='cast.php?id=".$c->getId()."'>".$c->getFirstname()." ".$c->getLastname()."</a></p>";
   echo "</li>";
 }
 echo "</ul>";

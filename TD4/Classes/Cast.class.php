@@ -1,5 +1,5 @@
 <?php
-require_once 'MyPDO.mpluchar_db.include.php'; // TO DO : à modifier
+require_once 'MyPDO.mpluchar_db.include.php'; 
 
 /**
  * Classe Cast
