@@ -1,18 +1,15 @@
 <?php
 require_once 'MyPDO.mpluchar_db.include.php';
 
-error_reporting(E_ALL);
-ini_set("display_errors", 1);
-
 /**
- * Classe Genre
+ * Classe Country
  */
-class Genre {
+class Country {
 
 	/***********************ATTRIBUTS***********************/
 	
 	// Identifiant
-	private $id = null;
+	private $code = null;
 	// Nom
 	private $name = null;
 
@@ -23,17 +20,17 @@ class Genre {
 	function __construct() {}
 
 	/**
-	 * Usine pour fabriquer une instance de Genre à partir d'un id (via la bdd)
-	 * @param int $id identifiant du genre à créer (bdd)
-	 * @return Genre instance correspondant à $id
+	 * Usine pour fabriquer une instance de Country à partir d'un id (via la bdd)
+	 * @param int $id identifiant du Country à créer (bdd)
+	 * @return Country instance correspondant à $id
 	 * @throws Exception s'il n'existe pas cet $id dans a bdd
 	 */
-	public static function createFromId($id){
-    $query = "SELECT * FROM Genre WHERE id=:id";
+	public static function createFromId($code){
+    $query = "SELECT * FROM Country WHERE code=:code";
     $stmt = MyPDO::getInstance()->prepare($query);
-    $stmt->bindValue(":id", $id);
+    $stmt->bindValue(":code", $code);
     $stmt->execute();
-    $stmt->setFetchMode(PDO::FETCH_CLASS, "Genre");
+    $stmt->setFetchMode(PDO::FETCH_CLASS, "Country");
     if (($object = $stmt->fetch()) !== false) {
       return $object;
     } else {
@@ -47,8 +44,8 @@ class Genre {
 	 * Getter sur l'identifiant
 	 * @return int $id
 	 */
-	public function getId() {
-    return $this->id;
+	public function getCode() {
+    return $this->code;
 	}
 
 	/**
@@ -62,25 +59,22 @@ class Genre {
 	/*******************GETTERS COMPLEXES*******************/
 
 	/**
-	 * Récupère tous les enregistrements de la table Genre de la bdd
-	 * qui ont au moins un film associé au genre
+	 * Récupère tous les enregistrements de la table Country de la bdd
+	 * qui ont au moins un film associé au Country
 	 * Tri par ordre alphabétique
-	 * @return array<Genre> liste d'instances de Genre
+	 * @return array<Country> liste d'instances de Country
 	 */
 	public static function getAll() {
-    $query = "SELECT * FROM Movie
-              INNER JOIN MovieGenre ON MovieGenre.idMovie = Movie.id
-              INNER JOIN Genre ON MovieGenre.idGenre = Genre.id
-              GROUP BY Genre.name
-              ORDER BY name ASC";
+    $query = "SELECT Country.* FROM Country 
+              INNER JOIN Movie ON Movie.idCountry = Country.code
+              WHERE count(Movie.id) >= 1";
     $stmt = MyPDO::getInstance()->prepare($query);
     $stmt->execute();
-    $stmt->setFetchMode(PDO::FETCH_CLASS, "Genre");
-    if (($object = $stmt->fetchAll()) !== false) {
+    $stmt->setFetchMode(PDO::FETCH_CLASS, "Country");
+    if (($object = $stmt->fetch()) !== false) {
       return $object;
     } else {
       throw new Exception("Erreur creation d'instance");
     }
 	}
-
 }

@@ -94,6 +94,92 @@ class Movie {
       throw new Exception("Erreur creation d'instance");
     }
 	}
+  
+	/**
+	 * Récupère les enregistrements de la table Movie de la bdd
+   * Dont les champs correspondent à la recherche
+	 * Tri par ordre décroissant sur la date de sortie
+	 * puis par ordre alphabétique sur le titre
+	 * @return array<Movie> liste d'instances de Movie
+	 */
+	public static function getAllFiltered() {
+    $and = false;
+    $where = false;
+    $query = "SELECT DISTINCT * FROM Movie
+              INNER JOIN MovieGenre ON Movie.id = MovieGenre.idMovie
+              INNER JOIN Genre ON Genre.id = MovieGenre.idGenre
+              INNER JOIN Country ON Movie.idCountry = Country.code
+              INNER JOIN Director ON Movie.id = Director.idMovie
+              INNER JOIN Cast ON Cast.id = Director.idDirector
+              ";
+  
+    if (!empty($_GET["date"])) {
+      $date = $_GET["date"];
+      if ( !$where ) { 
+        $query .= " WHERE ";
+        $where = true;
+      }
+      $query .= "YEAR(Movie.releaseDate) = :date";
+      $and = true;
+    }
+
+    if (!empty($_GET["title"])) {
+      $title = strtolower($_GET["title"]);
+      if ( !$where ) { 
+        $query .= " WHERE ";
+        $where = true;
+      }
+      if ( $and ) $query .= " AND ";
+      $query .= "Movie.title LIKE :title";
+      $and = true;
+    }
+
+    if (!empty($_GET["genre"])) {
+      if ( !$where ) { 
+        $query .= " WHERE ";
+        $where = true;
+      }
+      if ( $and ) $query .= " AND ";
+      $query .= "Genre.name IN (''";
+      foreach($_GET["genre"] as $g) {
+        $query .= ",'".$g."'";
+      }
+      $query .= ")";
+      $and = true;
+    }
+
+    /* Person checking */
+    if (!empty($_GET["director"])) {
+      $director = strtolower($_GET["director"]);
+      if ( !$where ) { 
+        $query .= " WHERE ";
+        $where = true;
+      }
+      if ( $and ) $query .= " AND ";
+      $query .= "LOWER(CONCAT(firstname, ' ', lastname)) LIKE :director";
+      $and = true;
+    }    
+    
+    $stmt = MyPDO::getInstance()->prepare($query);
+    
+    if (isset($date)) $stmt->bindValue(":date", $date);
+    if (isset($title)) $stmt->bindValue(":title", "%".$title."%");
+    if (isset($director)) $stmt->bindValue(":director", "%".$director."%");
+    
+    $query .= " GROUP BY Movie.title, Cast.id, Genre.id";
+    
+    echo "<pre>";
+    echo $query;
+    echo "</pre>";
+    
+    $stmt->execute();
+    $stmt->setFetchMode(PDO::FETCH_CLASS, "Movie");
+    if (($object = $stmt->fetchAll()) !== false) {
+      return $object;
+    } else {
+      throw new Exception("Erreur creation d'instance");
+    }
+	}
 
 	/**
 	 * Récupère tous les films du réalisateur/de la réalisatrice
@@ -103,8 +189,21 @@ class Movie {
 	 * @return array<Movie> liste d'instances de Movie
 	 */
 	public static function getFromDirectorId($idDirector){
-		//TO DO next : #04 Jointure Cast - Movie
-	}
+    $query = "SELECT Movie.id, title, releaseDate FROM Movie
+              JOIN Director ON Movie.id = Director.idMovie
+              JOIN Cast ON Cast.id = Director.idDirector
+              WHERE idDirector = :idDirector
+              ORDER BY releaseDate DESC, title ASC";
+    $stmt = MyPDO::getInstance()->prepare($query);
+    $stmt->bindValue(":idDirector", $idDirector);
+    $stmt->execute();
+    $stmt->setFetchMode(PDO::FETCH_CLASS, "Movie");
+    if (($object = $stmt->fetchAll()) !== false) {
+      return $object;
+    } else {
+      throw new Exception("Erreur creation d'instance");
+    }    
+  }
 
 	/**
 	 * Récupère tous les films de l'act.eur.rice avec son rôle pour chaque
@@ -114,7 +213,20 @@ class Movie {
 	 * @return array<Movie> liste d'instances de Movie
 	 */
 	public static function getFromActorId($idActor){
-		// TO DO next : #04 Jointure Cast - Movie
+    $query = "SELECT Movie.id, title, name FROM Movie
+              JOIN Actor ON Movie.id = Actor.idMovie
+              JOIN Cast ON Cast.id = Actor.idActor
+              WHERE idActor = :idActor
+              ORDER BY releaseDate DESC, title ASC";
+    $stmt = MyPDO::getInstance()->prepare($query);
+    $stmt->bindValue(":idActor", $idActor);
+    $stmt->execute();
+    $stmt->setFetchMode(PDO::FETCH_CLASS, "Movie");
+    if (($object = $stmt->fetchAll()) !== false) {
+      return $object;
+    } else {
+      throw new Exception("Erreur creation d'instance");
+    }    
 	}
 
 	/**
@@ -123,6 +235,39 @@ class Movie {
 	 * @return array<Genre> liste d'instances de Genre
 	 */
 	public function getGenres() {
-		// TO DO next : #05 Classe Genre
+    $query = "SELECT Genre.* FROM Movie
+              JOIN MovieGenre ON Movie.id = MovieGenre.idMovie
+              JOIN Genre ON Genre.id = MovieGenre.idGenre
+              WHERE idMovie = :idMovie
+              ORDER BY releaseDate DESC, title ASC";
+    $stmt = MyPDO::getInstance()->prepare($query);
+    $stmt->bindValue(":idMovie", $this->id);
+    $stmt->execute();
+    $stmt->setFetchMode(PDO::FETCH_CLASS, "Movie");
+    if (($object = $stmt->fetchAll()) !== false) {
+      return $object;
+    } else {
+      throw new Exception("Erreur creation d'instance");
+    }  
+	}
+
+	/**
+	 * Récupère les pays du film courant ($this)
+	 * Tri par ordre alphabétique
+	 * @return array<Country> liste d'instances de Genre
+	 */
+	public function getCountry() {
+    $query = "SELECT Country.* FROM Movie
+              JOIN Country ON Movie.idCountry = Country.code
+              WHERE Movie.id = :idMovie";
+    $stmt = MyPDO::getInstance()->prepare($query);
+    $stmt->bindValue(":idMovie", $this->id);
+    $stmt->execute();
+    $stmt->setFetchMode(PDO::FETCH_CLASS, "Movie");
+    if (($object = $stmt->fetchAll()) !== false) {
+      return $object;
+    } else {
+      throw new Exception("Erreur creation d'instance");
+    }  
 	}
 }

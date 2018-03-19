@@ -5,6 +5,7 @@ ini_set("display_errors", 1);
 
 /* Connexion to database */
 require_once 'Classes/Cast.class.php';
+require_once 'Views/Menu.view.php';
 require_once 'Views/Cast.view.php';
 require_once 'src/Style.php';
 
